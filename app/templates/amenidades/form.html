@@ -1,0 +1,40 @@
+{% extends "layout_admin.html" %}
+{% block title %}{% if amenidad %}Editar{% else %}Nueva{% endif %} Amenidad{% endblock %}
+{% block content %}
+<h1>{% if amenidad %}Editar{% else %}Nueva{% endif %} Amenidad</h1>
+<form method="POST" enctype="multipart/form-data">
+    <div>
+        <label for="nombre">Nombre:</label>
+        <input type="text" id="nombre" name="nombre" value="{{ amenidad.nombre if amenidad else '' }}" required>
+    </div>
+    <div>
+        <label for="descripcion">Descripción:</label>
+        <textarea id="descripcion" name="descripcion" required>{{ amenidad.descripcion if amenidad else '' }}</textarea>
+    </div>
+    
+    {# Image Upload Section #}
+    <div id="image-upload-container">
+        <label>Imagen de la Amenidad:</label>
+        
+        {# Display existing image #}
+        {% if amenidad and amenidad.imagenes %}
+            {% for imagen in amenidad.imagenes %}
+            <div class="existing-image">
+                <img src="{{ imagen.imagen }}" alt="Imagen de Amenidad" style="max-width: 200px;">
+                <input type="checkbox" name="eliminar_imagen" value="{{ imagen.id }}"> Eliminar
+                <input type="hidden" name="imagen_existente" value="{{ imagen.id }}">
+            </div>
+            {% endfor %}
+        {% endif %}
+
+        {# New Image Upload Input #}
+        <div id="image-input">
+            <input type="file" name="imagen" accept="image/*">
+        </div>
+    </div>
+
+    <div>
+        <input type="submit" value="{% if amenidad %}Actualizar{% else %}Crear{% endif %} Amenidad">
+    </div>
+</form>
+{% endblock %}

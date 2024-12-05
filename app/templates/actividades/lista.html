@@ -1,0 +1,47 @@
+{% extends "layout_admin.html" %}
+{% block title %}Lista de Actividades{% endblock %}
+{% block content %}
+<h1>Actividades</h1>
+
+{# Solo mostrar el botón de Nueva Actividad para arrendadores y admin #}
+{% if current_user.is_authenticated and current_user.tipo_usuario in ['arrendador', 'admin'] %}
+<a href="{{ url_for('actividades.crear_actividad') }}">Nueva Actividad</a>
+{% endif %}
+
+<table>
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th>Costo</th>
+            {# Mostrar columna de acciones solo para arrendadores y admin #}
+            {% if current_user.is_authenticated and current_user.tipo_usuario in ['arrendador', 'admin'] %}
+            <th>Acciones</th>
+            {% endif %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for actividad in actividades %}
+            <tr>
+                <td>{{ actividad.nombre }}</td>
+                <td>{{ actividad.descripcion }}</td>
+                <td>{{ actividad.costo }}</td>
+
+                {% if current_user.is_authenticated and current_user.tipo_usuario == 'arrendador' %}
+                    <td>
+                        <a href="{{ url_for('actividades.editar_actividad', id=actividad.id) }}" class="btn btn-sm btn-outline-primary me-2">
+                            <i class="bi bi-pencil"></i>
+                        </a>
+                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="confirmarEliminacion({{ actividad.id }})">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+
+
+    
+    </tbody>
+</table>
+{% endblock %}

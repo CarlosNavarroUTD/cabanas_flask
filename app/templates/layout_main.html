@@ -1,0 +1,52 @@
+{% extends "layout_base.html" %}
+
+{% block navbar %}
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container">
+        <a class="navbar-brand" href="{{ url_for('home.index') }}">Cabañas</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('home.index') }}">Inicio</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('cabanas.lista_cabanas') }}">Cabañas</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('actividades.lista_actividades') }}">Actividades</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('amenidades.lista_amenidades') }}">Amenidades</a>
+                </li>
+                
+                {% if current_user.is_authenticated %}
+                    {% if current_user.tipo_usuario in ['admin', 'arrendador'] %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('admin.dashboard') }}">Panel de Administración</a>
+                    </li>
+                    {% endif %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('usuarios.logout') }}">Cerrar Sesión</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('usuarios.login') }}">Iniciar Sesión</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="registerDropdown" role="button" data-bs-toggle="dropdown">
+                            Registrarse
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ url_for('usuarios.register', user_type='cliente') }}">Como Cliente</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('usuarios.register', user_type='arrendador') }}">Como Arrendador</a></li>
+                        </ul>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
+{% endblock %}

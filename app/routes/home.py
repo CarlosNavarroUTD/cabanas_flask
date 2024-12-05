@@ -8,4 +8,11 @@ def index():
     """
     Renderiza la página de inicio de la aplicación.
     """
-    return render_template('home.html')
+    return render_template('home/home.html')
+
+@home_bp.route('/nosotros')
+def nosotros():
+    """
+    Renderiza la página de nosotros de la aplicación.
+    """
+    return render_template('home/nosotros.html')

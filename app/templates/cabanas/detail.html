@@ -1,0 +1,24 @@
+<!-- templates/cabanas/detalle.html -->
+{% extends "layout_main.html" %}
+
+{% block content %}
+<div class="container">
+    <h1>{{ cabana.nombre }}</h1>
+    <div class="row">
+        <div class="col-md-6">
+            <img src="{{ cabana.imagen }}" class="img-fluid" alt="{{ cabana.nombre }}">
+        </div>
+        <div class="col-md-6">
+            <h2>Detalles</h2>
+            <p><strong>Descripción:</strong> {{ cabana.descripcion }}</p>
+            <p><strong>Capacidad:</strong> {{ cabana.capacidad }} personas</p>
+            <p><strong>Precio por noche:</strong> ${{ cabana.costo_por_noche }}</p>
+            <p><strong>Ubicación:</strong> {{ cabana.ubicacion }}</p>
+            
+            {% if current_user.is_authenticated and current_user.tipo_usuario == 'cliente' %}
+            <a href="{{ url_for('reservas.crear_reserva', cabana_id=cabana.id) }}" class="btn btn-primary">Reservar</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

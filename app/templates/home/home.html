@@ -1,0 +1,71 @@
+<!-- templates/cabanas/lista.html -->
+{% extends "layout_main.html" %}
+
+{% block content %}
+<div class="container">
+    <h1>Nuestras Cabañas</h1>
+    
+    <div id="carouselCabanas" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner" id="carrusel-cabanas">
+            <!-- Las cabañas se cargarán dinámicamente con JavaScript -->
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselCabanas" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Anterior</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselCabanas" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Siguiente</span>
+        </button>
+    </div>
+
+    <div class="row mt-4" id="tarjetas-cabanas">
+        <!-- Las tarjetas de cabañas se cargarán dinámicamente con JavaScript -->
+    </div>
+</div>
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    fetch('/api/cabanas')
+        .then(response => response.json())
+        .then(cabanas => {
+            const carrusel = document.getElementById('carrusel-cabanas');
+            const tarjetas = document.getElementById('tarjetas-cabanas');
+
+            cabanas.forEach((cabana, index) => {
+                // Crear slide para el carrusel
+                const carouselItem = document.createElement('div');
+                carouselItem.classList.add('carousel-item');
+                if (index === 0) carouselItem.classList.add('active');
+                
+                carouselItem.innerHTML = `
+                    <img src="${cabana.imagen}" class="d-block w-100" alt="${cabana.nombre}">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>${cabana.nombre}</h5>
+                        <p>Precio por noche: $${cabana.precio}</p>
+                    </div>
+                `;
+                carrusel.appendChild(carouselItem);
+
+                // Crear tarjeta para la lista de cabañas
+                const tarjeta = document.createElement('div');
+                tarjeta.classList.add('col-md-4', 'mb-4');
+                tarjeta.innerHTML = `
+                    <div class="card">
+                        <img src="${cabana.imagen}" class="card-img-top" alt="${cabana.nombre}">
+                        <div class="card-body">
+                            <h5 class="card-title">${cabana.nombre}</h5>
+                            <p class="card-text">Precio por noche: $${cabana.precio}</p>
+                            <a href="/cabanas/${cabana.id}" class="btn btn-primary">Ver detalles</a>
+                        </div>
+                    </div>
+                `;
+                tarjetas.appendChild(tarjeta);
+            });
+        })
+        .catch(error => console.error('Error al cargar las cabañas:', error));
+});
+</script>
+{% endblock %}
+{% endblock %}

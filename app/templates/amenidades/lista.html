@@ -1,0 +1,41 @@
+{% extends "layout_admin.html" %}
+{% block title %}Lista de Amenidades{% endblock %}
+{% block content %}
+<h1>Amenidades</h1>
+
+{# Solo mostrar el botón de Nueva Amenidad para arrendadores y admin #}
+{% if current_user.is_authenticated and current_user.tipo_usuario in ['arrendador', 'admin'] %}
+<a href="{{ url_for('amenidades.crear_amenidad') }}">Nueva Amenidad</a>
+{% endif %}
+
+<table>
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            {# Mostrar columna de acciones solo para arrendadores y admin #}
+            {% if current_user.is_authenticated and current_user.tipo_usuario in ['arrendador', 'admin'] %}
+            <th>Acciones</th>
+            {% endif %}
+        </tr>
+    </thead>
+    <tbody>
+    {% for amenidad in amenidades %}
+        <tr>
+            <td>{{ amenidad.nombre }}</td>
+            <td>{{ amenidad.descripcion }}</td>
+            
+            {# Mostrar acciones solo para arrendadores y admin #}
+            {% if current_user.is_authenticated and current_user.tipo_usuario in ['arrendador', 'admin'] %}
+            <td>
+                <a href="{{ url_for('amenidades.editar_amenidad', id=amenidad.id) }}">Editar</a>
+                <form method="POST" action="{{ url_for('amenidades.eliminar_amenidad', id=amenidad.id) }}" style="display:inline;">
+                    <input type="submit" value="Eliminar" onclick="return confirm('¿Estás seguro?')">
+                </form>
+            </td>
+            {% endif %}
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

@@ -1,30 +1,87 @@
-{% extends "layout.html" %}
-{% block title %}{% if cabana %}Editar{% else %}Nueva{% endif %} Cabaña{% endblock %}
+{% extends "layout_admin.html" %}
+{% block title %}{% if actividad %}Editar{% else %}Nueva{% endif %} Actividad{% endblock %}
 {% block content %}
-<h1>{% if cabana %}Editar{% else %}Nueva{% endif %} Cabaña</h1>
-<form method="POST">
+<h1>{% if actividad %}Editar{% else %}Nueva{% endif %} Actividad</h1>
+<form method="POST" enctype="multipart/form-data">
     <div>
         <label for="nombre">Nombre:</label>
-        <input type="text" id="nombre" name="nombre" value="{{ cabana.nombre if cabana else '' }}" required>
+        <input type="text" id="nombre" name="nombre" value="{{ actividad.nombre if actividad else '' }}" required>
     </div>
     <div>
         <label for="descripcion">Descripción:</label>
-        <textarea id="descripcion" name="descripcion" required>{{ cabana.descripcion if cabana else '' }}</textarea>
+        <textarea id="descripcion" name="descripcion" required>{{ actividad.descripcion if actividad else '' }}</textarea>
     </div>
     <div>
-        <label for="capacidad">Capacidad:</label>
-        <input type="number" id="capacidad" name="capacidad" value="{{ cabana.capacidad if cabana else '' }}" required>
+        <label for="costo">Costo:</label>
+        <input type="number" step="0.01" id="costo" name="costo" value="{{ actividad.costo if actividad else '' }}" required>
     </div>
+    
+    {# Arrendador Selection - Only for admin #}
+    {% if current_user.tipo_usuario == 'admin' %}
     <div>
-        <label for="costo_por_noche">Costo por Noche:</label>
-        <input type="number" step="0.01" id="costo_por_noche" name="costo_por_noche" value="{{ cabana.costo_por_noche if cabana else '' }}" required>
+        <label for="arrendador_id">Arrendador:</label>
+        <select id="arrendador_id" name="arrendador_id" required>
+            {% for arrendador in arrendadores %}
+            <option value="{{ arrendador.id_arrendador }}" 
+                    {% if actividad and actividad.arrendador_id == arrendador.id_arrendador %}selected{% endif %}>
+                {{ arrendador.nombre or arrendador.usuario.nombre_usuario }}
+            </option>
+            {% endfor %}
+        </select>
     </div>
-    <div>
-        <label for="ubicacion">Ubicación:</label>
-        <input type="text" id="ubicacion" name="ubicacion" value="{{ cabana.ubicacion if cabana else '' }}" required>
+    {% endif %}
+
+    {# Image Upload Section #}
+    <div id="image-upload-container">
+        <label>Imágenes de la Actividad:</label>
+        
+        {# Display existing images #}
+        {% if actividad and actividad.imagenes %}
+            {% for imagen in actividad.imagenes %}
+            <div class="existing-image">
+                <img src="{{ imagen.imagen }}" alt="Imagen de Actividad" style="max-width: 200px;">
+                <input type="checkbox" name="eliminar_imagenes" value="{{ imagen.id }}"> Eliminar
+                <input type="hidden" name="imagen_existente" value="{{ imagen.id }}">
+            </div>
+            {% endfor %}
+        {% endif %}
+
+        {# New Image Upload Inputs #}
+        <div id="new-image-inputs">
+            <input type="file" name="imagenes" accept="image/*" multiple>
+        </div>
+        
+        {# Button to add more image upload inputs #}
+        <button type="button" id="add-image-input">Añadir más imágenes</button>
     </div>
+
     <div>
-        <input type="submit" value="{% if cabana %}Actualizar{% else %}Crear{% endif %} Cabaña">
+        <input type="submit" value="{% if actividad %}Actualizar{% else %}Crear{% endif %} Actividad">
     </div>
 </form>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const addImageButton = document.getElementById('add-image-input');
+    const newImageInputsContainer = document.getElementById('new-image-inputs');
+
+    addImageButton.addEventListener('click', function() {
+        const newInput = document.createElement('input');
+        newInput.type = 'file';
+        newInput.name = 'imagenes';
+        newInput.accept = 'image/*';
+        
+        const removeButton = document.createElement('button');
+        removeButton.textContent = 'Eliminar';
+        removeButton.type = 'button';
+        removeButton.addEventListener('click', function() {
+            newInput.remove();
+            removeButton.remove();
+        });
+
+        newImageInputsContainer.appendChild(newInput);
+        newImageInputsContainer.appendChild(removeButton);
+    });
+});
+</script>
 {% endblock %}

@@ -1,0 +1,84 @@
+{% extends "layout_admin.html" %}
+
+{% block title %}{% if cabana %}Editar{% else %}Nueva{% endif %} Cabaña{% endblock %}
+
+{% block content %}
+<h1>{% if cabana %}Editar{% else %}Nueva{% endif %} Cabaña</h1>
+
+<form method="POST" enctype="multipart/form-data">
+    <div>
+        <label for="nombre">Nombre:</label>
+        <input type="text" id="nombre" name="nombre" value="{{ cabana.nombre if cabana else '' }}" required>
+    </div>
+
+    <div>
+        <label for="descripcion">Descripción:</label>
+        <textarea id="descripcion" name="descripcion" required>{{ cabana.descripcion if cabana else '' }}</textarea>
+    </div>
+
+    <div>
+        <label for="capacidad">Capacidad:</label>
+        <input type="number" id="capacidad" name="capacidad" value="{{ cabana.capacidad if cabana else '' }}" required>
+    </div>
+
+    <div>
+        <label for="costo_por_noche">Costo por Noche:</label>
+        <input type="number" id="costo_por_noche" name="costo_por_noche" step="0.01" value="{{ cabana.costo_por_noche if cabana else '' }}" required>
+    </div>
+
+    <div>
+        <label for="ubicacion">Ubicación:</label>
+        <input type="text" id="ubicacion" name="ubicacion" value="{{ cabana.ubicacion if cabana else '' }}" required>
+    </div>
+
+    <div>
+        <label for="estado">Estado:</label>
+        <select id="estado" name="estado">
+            <option value="disponible" {% if cabana and cabana.estado == 'disponible' %}selected{% endif %}>Disponible</option>
+            <option value="ocupada" {% if cabana and cabana.estado == 'ocupada' %}selected{% endif %}>Ocupada</option>
+            <option value="mantenimiento" {% if cabana and cabana.estado == 'mantenimiento' %}selected{% endif %}>Mantenimiento</option>
+            <option value="inactiva" {% if cabana and cabana.estado == 'inactiva' %}selected{% endif %}>Inactiva</option>
+        </select>
+    </div>
+
+    <div>
+        <label>Amenidades:</label>
+        {% for amenidad in amenidades %}
+        <div>
+            <input type="checkbox" 
+                   name="amenidades" 
+                   value="{{ amenidad.id }}"
+                   {% if cabana and amenidad in cabana.amenidades %}checked{% endif %}>
+            {{ amenidad.nombre }}
+        </div>
+        {% endfor %}
+    </div>
+
+    <div id="image-upload-container">
+        <label>Imágenes de la Cabaña:</label>
+
+        {# Display existing images #}
+        {% if cabana and cabana.imagenes %}
+            {% for imagen in cabana.imagenes %}
+            <div class="existing-image">
+                <img src="{{ imagen.imagen }}" alt="Imagen de Cabaña" style="max-width: 200px;">
+                <input type="radio" 
+                       name="imagen_principal" 
+                       value="{{ loop.index0 }}" 
+                       {% if imagen.es_principal %}checked{% endif %}> 
+                Imagen Principal
+            </div>
+            {% endfor %}
+        {% endif %}
+
+        {# New Image Upload Input #}
+        <div id="image-input">
+            <input type="file" name="imagenes" accept="image/*" multiple>
+        </div>
+    </div>
+
+    <div>
+        <input type="submit" value="{% if cabana %}Actualizar{% else %}Crear{% endif %} Cabaña">
+    </div>
+</form>
+{% endblock %}

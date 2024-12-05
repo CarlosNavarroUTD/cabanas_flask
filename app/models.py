@@ -47,13 +47,19 @@ class Cabana(db.Model):
     estado = db.Column(Enum('disponible', 'ocupada', 'mantenimiento', 'inactiva', name='cabana_estado_enum'), default='disponible')
     arrendador_id = db.Column(db.Integer, db.ForeignKey('Arrendador.id_arrendador'), nullable=False)
 
-class ImagenCabana(db.Model):
-    __tablename__ = 'ImagenCabana'
+class Amenidad(db.Model):
+    __tablename__ = 'Amenidad'
+    id = db.Column(db.Integer, primary_key=True)
+    nombre = db.Column(db.String(255), nullable=False)
+    descripcion = db.Column(db.Text, nullable=False)
+
+class CabanaAmenidad(db.Model):
+    __tablename__ = 'CabanaAmenidad'
     id = db.Column(db.Integer, primary_key=True)
     cabana_id = db.Column(db.Integer, db.ForeignKey('Cabana.id'), nullable=False)
-    imagen = db.Column(db.String(255), nullable=False)
-    es_principal = db.Column(db.Boolean, default=False)
-    cabana = db.relationship('Cabana', backref=db.backref('imagenes', lazy=True))
+    amenidad_id = db.Column(db.Integer, db.ForeignKey('Amenidad.id'), nullable=False)
+    cabana = db.relationship('Cabana', backref=db.backref('cabana_amenidades', lazy=True))
+    amenidad = db.relationship('Amenidad', backref=db.backref('cabana_amenidades', lazy=True))
 
 class Resena(db.Model):
     __tablename__ = 'Resena'
@@ -99,3 +105,27 @@ class PaqueteActividad(db.Model):
     actividad_id = db.Column(db.Integer, db.ForeignKey('Actividad.id'), nullable=False)
     paquete = db.relationship('Paquete', backref=db.backref('actividades', lazy=True))
     actividad = db.relationship('Actividad', backref=db.backref('paquetes', lazy=True))
+
+class ImagenActividad(db.Model):
+    __tablename__ = 'ImagenActividad'
+    id = db.Column(db.Integer, primary_key=True)
+    actividad_id = db.Column(db.Integer, db.ForeignKey('Actividad.id'), nullable=False)
+    imagen = db.Column(db.String(255), nullable=False)
+    es_principal = db.Column(db.Boolean, default=False)
+    actividad = db.relationship('Actividad', backref=db.backref('imagenes', lazy=True, cascade='all, delete-orphan'))
+
+class ImagenAmenidad(db.Model):
+    __tablename__ = 'ImagenAmenidad'
+    id = db.Column(db.Integer, primary_key=True)
+    amenidad_id = db.Column(db.Integer, db.ForeignKey('Amenidad.id'), nullable=False)
+    imagen = db.Column(db.String(255), nullable=False)
+    amenidad = db.relationship('Amenidad', backref=db.backref('imagenes', lazy=True, cascade='all, delete-orphan'))
+
+class ImagenCabana(db.Model):
+    __tablename__ = 'ImagenCabana'
+    id = db.Column(db.Integer, primary_key=True)
+    cabana_id = db.Column(db.Integer, db.ForeignKey('Cabana.id'), nullable=False)
+    imagen = db.Column(db.String(255), nullable=False)
+    es_principal = db.Column(db.Boolean, default=False)
+    cabana = db.relationship('Cabana', backref=db.backref('imagenes', lazy='dynamic', cascade='all, delete-orphan'))
+

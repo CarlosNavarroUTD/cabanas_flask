@@ -1,0 +1,39 @@
+{% extends "layout_admin.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Panel de {% if current_user.tipo_usuario == 'admin' %}Administración{% else %}Arrendador{% endif %}</h1>
+    
+    <div class="row">
+        {% if current_user.tipo_usuario == 'admin' %}
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Usuarios Totales</h5>
+                    <p class="card-text display-4">{{ total_users }}</p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Cabañas Registradas</h5>
+                    <p class="card-text display-4">{{ total_cabanas }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        {% if current_user.tipo_usuario == 'admin' %}
+        <div class="col-md-4">
+            <a href="{{ url_for('admin.usuarios') }}" class="btn btn-primary">Gestionar Usuarios</a>
+        </div>
+        {% endif %}
+        <div class="col-md-4">
+            <a href="{{ url_for('cabanas.lista_cabanas') }}" class="btn btn-secondary">Gestionar Cabañas</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
