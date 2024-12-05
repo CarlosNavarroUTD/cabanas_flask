@@ -4,6 +4,7 @@ from app.models import Cabana, Amenidad, CabanaAmenidad, ImagenCabana
 from app.decorators import arrendador_required
 import os
 from werkzeug.utils import secure_filename
+from flask_login import current_user
 
 # Crear el Blueprint para cabañas
 cabanas_bp = Blueprint('cabanas', __name__)
@@ -13,6 +14,13 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+@cabanas_bp.route('/api/cabanas')
+def api_lista_cabanas():
+    """Lista todas las cabañas disponibles."""
+    cabanas = Cabana.query.all()
+    return render_template('cabanas/lista.html', cabanas=cabanas)
+
 
 @cabanas_bp.route('/cabanas')
 def lista_cabanas():
@@ -73,7 +81,7 @@ def crear_cabana():
                     imagen_cabana = ImagenCabana(
                         cabana_id=nueva_cabana.id,
                         imagen=f'/static/uploads/cabanas/{filename}',
-                        es_principal=(imagen_principal == str(i))
+                        es_principal=(len(imagenes) == 1 or imagen_principal == str(i))
                     )
                     db.session.add(imagen_cabana)
             
@@ -131,7 +139,7 @@ def editar_cabana(id):
                         imagen_cabana = ImagenCabana(
                             cabana_id=cabana.id,
                             imagen=f'/static/uploads/cabanas/{filename}',
-                            es_principal=(imagen_principal == str(i))
+                            es_principal=(len(imagenes) == 1 or imagen_principal == str(i))
                         )
                         db.session.add(imagen_cabana)
             

@@ -1,40 +1,51 @@
 {% extends "layout_admin.html" %}
-{% block title %}{% if amenidad %}Editar{% else %}Nueva{% endif %} Amenidad{% endblock %}
+
+{% block title %}{% if actividad %}Editar{% else %}Nueva{% endif %} Actividad{% endblock %}
+
 {% block content %}
-<h1>{% if amenidad %}Editar{% else %}Nueva{% endif %} Amenidad</h1>
+<h1>{% if actividad %}Editar{% else %}Nueva{% endif %} Actividad</h1>
+
 <form method="POST" enctype="multipart/form-data">
     <div>
         <label for="nombre">Nombre:</label>
-        <input type="text" id="nombre" name="nombre" value="{{ amenidad.nombre if amenidad else '' }}" required>
+        <input type="text" id="nombre" name="nombre" value="{{ actividad.nombre if actividad else '' }}" required>
     </div>
+
     <div>
         <label for="descripcion">Descripción:</label>
-        <textarea id="descripcion" name="descripcion" required>{{ amenidad.descripcion if amenidad else '' }}</textarea>
+        <textarea id="descripcion" name="descripcion" required>{{ actividad.descripcion if actividad else '' }}</textarea>
     </div>
-    
-    {# Image Upload Section #}
+
+    <div>
+        <label for="costo">Costo:</label>
+        <input type="number" id="costo" name="costo" step="0.01" value="{{ actividad.costo if actividad else '' }}" required>
+    </div>
+
     <div id="image-upload-container">
-        <label>Imagen de la Amenidad:</label>
-        
-        {# Display existing image #}
-        {% if amenidad and amenidad.imagenes %}
-            {% for imagen in amenidad.imagenes %}
+        <label>Imágenes de la Actividad:</label>
+
+        {# Display existing images #}
+        {% if actividad and actividad.imagenes %}
+            {% for imagen in actividad.imagenes %}
             <div class="existing-image">
-                <img src="{{ imagen.imagen }}" alt="Imagen de Amenidad" style="max-width: 200px;">
-                <input type="checkbox" name="eliminar_imagen" value="{{ imagen.id }}"> Eliminar
-                <input type="hidden" name="imagen_existente" value="{{ imagen.id }}">
+                <img src="{{ imagen.imagen }}" alt="Imagen de Actividad" style="max-width: 200px;">
+                <input type="radio" 
+                       name="imagen_principal" 
+                       value="{{ loop.index0 }}" 
+                       {% if imagen.es_principal %}checked{% endif %}> 
+                Imagen Principal
             </div>
             {% endfor %}
         {% endif %}
 
         {# New Image Upload Input #}
         <div id="image-input">
-            <input type="file" name="imagen" accept="image/*">
+            <input type="file" name="imagenes" accept="image/*" multiple>
         </div>
     </div>
 
     <div>
-        <input type="submit" value="{% if amenidad %}Actualizar{% else %}Crear{% endif %} Amenidad">
+        <input type="submit" value="{% if actividad %}Actualizar{% else %}Crear{% endif %} Actividad">
     </div>
 </form>
 {% endblock %}
